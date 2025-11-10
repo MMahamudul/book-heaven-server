@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
@@ -10,7 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 
-/* const uri = "mongodb+srv://bookDB:Cn7PlzsGiggpipHI@cluster0.nma65uq.mongodb.net/?appName=Cluster0"; */
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nma65uq.mongodb.net/?appName=Cluster0`;
 
 
@@ -30,6 +29,7 @@ async function run() {
     const db = client.db('bookDB');
     const booksCollection = db.collection('books')
 
+/* all books API */
     app.get('/all-books', async (req, res)=>{
         const result = await booksCollection.find().toArray();
       
@@ -37,6 +37,17 @@ async function run() {
         res.send(result)
 
     })
+/*  book details API */
+
+app.get('/book-details/:id', async (req, res)=>{
+
+    const {id} = req.params;
+    const result = await booksCollection.findOne({_id: new ObjectId(id)});
+
+    res.send(result)
+
+})
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
