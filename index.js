@@ -29,7 +29,7 @@ async function run() {
     const db = client.db('bookDB');
     const booksCollection = db.collection('books')
 
-/* all books API */
+/* all books GET API */
     app.get('/all-books', async (req, res)=>{
         const result = await booksCollection.find().toArray();
       
@@ -37,7 +37,7 @@ async function run() {
         res.send(result)
 
     })
-/*  book details API */
+/*  book details GET API */
 
 app.get('/book-details/:id', async (req, res)=>{
 
@@ -46,6 +46,14 @@ app.get('/book-details/:id', async (req, res)=>{
 
     res.send(result)
 
+})
+
+/* add book POST API */
+
+app.post('/add-book', async (req, res) =>{
+    const newBook = rew.body;
+    const result = await booksCollection.insertOne(newBook)
+    res.send(result)
 })
 
 
