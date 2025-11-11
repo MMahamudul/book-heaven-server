@@ -29,7 +29,7 @@ async function run() {
     const db = client.db('bookDB');
     const booksCollection = db.collection('books')
 
-/* all books GET API */
+/* all books using GET request */
     app.get('/all-books', async (req, res)=>{
         const result = await booksCollection.find().toArray();
       
@@ -37,7 +37,7 @@ async function run() {
         res.send(result)
 
     })
-/*  book details GET API */
+/*  book details using GET request */
 
 app.get('/book-details/:id', async (req, res)=>{
 
@@ -48,7 +48,7 @@ app.get('/book-details/:id', async (req, res)=>{
 
 })
 
-/* add book POST API */
+/* add book using POST request */
 
 app.post('/add-book', async (req, res) =>{
     const newBook = req.body;
@@ -57,6 +57,15 @@ app.post('/add-book', async (req, res) =>{
     res.send(result)
 })
 
+/* update book using PUT request */
+
+app.put('/update-book/:id', async (req, res)=>{
+    const {id} = req.params;
+    const result = await booksCollection.updateOne({_id: new ObjectId(id)});
+
+    res.send(result)
+
+})
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
