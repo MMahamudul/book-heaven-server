@@ -56,6 +56,14 @@ app.post('/add-book', async (req, res) =>{
     const result = await booksCollection.insertOne(newBook)
     res.send(result)
 })
+/* My book using GET request */
+
+app.get('/my-books', async (req, res)=>{
+    const email = req.query.email;
+    const result = await booksCollection.find({userEmail: email}).toArray();
+    res.send(result);
+
+})
 
 /* update book using PUT request */
 
