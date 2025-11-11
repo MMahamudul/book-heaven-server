@@ -61,7 +61,9 @@ app.post('/add-book', async (req, res) =>{
 
 app.put('/update-book/:id', async (req, res)=>{
     const {id} = req.params;
-    const result = await booksCollection.updateOne({_id: new ObjectId(id)});
+    const updateBook = req.body;
+    const result = await booksCollection.updateOne({_id: new ObjectId(id)},
+    { $set: updateBook });
 
     res.send(result)
 
