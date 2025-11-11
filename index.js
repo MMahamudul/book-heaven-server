@@ -51,7 +51,8 @@ app.get('/book-details/:id', async (req, res)=>{
 /* add book POST API */
 
 app.post('/add-book', async (req, res) =>{
-    const newBook = rew.body;
+    const newBook = req.body;
+    console.log(newBook)
     const result = await booksCollection.insertOne(newBook)
     res.send(result)
 })
