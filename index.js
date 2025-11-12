@@ -28,6 +28,7 @@ async function run() {
     
     const db = client.db('bookDB');
     const booksCollection = db.collection('books')
+    const commentsCollection = db.collection('comments')
 
 /* all books using GET request */
     app.get('/all-books', async (req, res)=>{
@@ -63,6 +64,42 @@ app.post('/add-book', async (req, res) =>{
     const result = await booksCollection.insertOne(newBook)
     res.send(result)
 })
+/* add comment using POST request */
+/* app.post('/comments', async (req, res) =>{
+    const newComment = req.body;
+  console.log(newComment) 
+    const result = await commentsCollection.insertOne(newComment)
+    res.send(result)
+})  */
+
+app.post("/comments", async (req, res) => {
+  try {
+    const { comment, userName, coverImage, bookId } = req.body;
+
+    // Validate required fields
+    if (!comment || !bookId) {
+      return res.status(400).send({ message: "Comment and bookId are required" });
+    }
+
+    const newComment = {
+      comment,
+      userName: userName || "Anonymous",
+      coverImage: coverImage || "", // optional default
+      bookId,
+      created_at: new Date()
+    };
+
+    const result = await commentsCollection.insertOne(newComment);
+
+    // Return the saved comment including _id
+    res.send({ insertedId: result.insertedId, ...newComment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Failed to add comment" });
+  }
+});
+
+
 /* My book using GET request */
 
 app.get('/my-books', async (req, res)=>{
