@@ -5,7 +5,7 @@ const cors = require('cors')
 const app = express()
 const port = process.env.port || 3000
 
-console.log(process.env)
+/* console.log(process.env) */
 app.use(cors());
 app.use(express.json());
 
@@ -47,6 +47,13 @@ app.get('/book-details/:id', async (req, res)=>{
     res.send(result)
 
 })
+/*  sorting latest book using GET request */
+
+app.get('/latest-book', async (req, res)=>{
+  const result = await booksCollection.find().sort({created_at: 'desc'}).limit(6).toArray();
+
+  res.send(result);
+})
 
 /* add book using POST request */
 
@@ -83,6 +90,8 @@ app.delete('/delete-book/:id', async (req, res)=>{
     res.send(result)
 
 })
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
