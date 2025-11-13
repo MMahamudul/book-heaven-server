@@ -72,11 +72,13 @@ app.post('/add-book', async (req, res) =>{
     res.send(result)
 })  */
 
+// COMMENTS ROUTES
+
+// POST → Add a new comment
 app.post("/comments", async (req, res) => {
   try {
     const { comment, userName, coverImage, bookId } = req.body;
 
-    // Validate required fields
     if (!comment || !bookId) {
       return res.status(400).send({ message: "Comment and bookId are required" });
     }
@@ -84,20 +86,42 @@ app.post("/comments", async (req, res) => {
     const newComment = {
       comment,
       userName: userName || "Anonymous",
-      coverImage: coverImage || "", // optional default
+      coverImage: coverImage || "",
       bookId,
-      created_at: new Date()
+      created_at: new Date(),
     };
 
     const result = await commentsCollection.insertOne(newComment);
+    const savedComment = await commentsCollection.findOne({ _id: result.insertedId });
 
-    // Return the saved comment including _id
-    res.send({ insertedId: result.insertedId, ...newComment });
+    res.send(savedComment);
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: "Failed to add comment" });
   }
 });
+
+// GET → Fetch all comments for a specific book
+app.get("/comments", async (req, res) => {
+  try {
+    const { bookId } = req.query;
+
+    if (!bookId) {
+      return res.status(400).send({ message: "bookId query parameter required" });
+    }
+
+    const comments = await commentsCollection
+      .find({ bookId })
+      .sort({ created_at: -1 })
+      .toArray();
+
+    res.send(comments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Failed to fetch comments" });
+  }
+});
+
 
 
 /* My book using GET request */
